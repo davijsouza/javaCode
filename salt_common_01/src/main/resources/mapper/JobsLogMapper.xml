@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.souche.salt_common_01.mapper.JobsLogMapper" >
+  <resultMap id="BaseResultMap" type="com.souche.salt_common_01.entity.JobsLog" >
+    <result column="id" property="id" jdbcType="VARCHAR" />
+    <result column="missionName" property="missionname" jdbcType="VARCHAR" />
+    <result column="user" property="user" jdbcType="VARCHAR" />
+    <result column="account" property="account" jdbcType="VARCHAR" />
+    <result column="server" property="server" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="startTime" property="starttime" jdbcType="TIMESTAMP" />
+    <result column="endTime" property="endtime" jdbcType="TIMESTAMP" />
+    <result column="totalTime" property="totaltime" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <select id="conditionQuery" parameterType="java.util.Map" resultMap="BaseResultMap">
+    select * from jobsLog
+
+       <where>
+         <if test="jobName!=null and jobName!=''">
+         instr(missionName,#{jobName})>0
+         </if>
+         <if test="user!='admin'">
+          and user=#{user}
+         </if>
+     <!--  <choose>
+         <when test="user=='admin'">
+         </when>
+          <when test="user!=null and user !=''">
+           and user=#{user}
+         </when>
+         <otherwise>
+           and user='error'
+         </otherwise>
+       </choose>-->
+         <if test="jobType!=null and jobType !=''">
+           and   account=#{jobType}
+         </if>
+         <if test="status!=null and status !=''">
+           and   status=#{status}
+         </if>
+         <if test="startTime!=null and startTime!=''">
+           and startTime&gt;=#{startTime}
+         </if>
+         <if test="endTime!=null and endTime !=''">
+           and endTime&lt;=#{endTime}
+         </if>
+
+       </where>
+        ORDER BY startTime desc
+  </select>
+
+<select id="selectById" parameterType="string" resultType="jobsLog">
+  select * from jobsLog where id =#{jobLogId}
+</select>
+
+
+
+
+
+
+
+
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, missionName, user, account, server, status, startTime, endTime, totalTime
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.souche.salt_common_01.entity.JobsLogExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from jobsLog
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <delete id="deleteByExample" parameterType="com.souche.salt_common_01.entity.JobsLogExample" >
+    delete from jobsLog
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.souche.salt_common_01.entity.JobsLog" >
+    insert into jobsLog (id, missionName, user,
+      account, server, status,
+      startTime, endTime, totalTime
+      )
+    values (#{id,jdbcType=VARCHAR}, #{missionname,jdbcType=VARCHAR}, #{user,jdbcType=VARCHAR},
+      #{account,jdbcType=VARCHAR}, #{server,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR},
+      #{starttime,jdbcType=TIMESTAMP}, #{endtime,jdbcType=TIMESTAMP}, #{totaltime,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.souche.salt_common_01.entity.JobsLog" >
+    insert into jobsLog
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="missionname != null" >
+        missionName,
+      </if>
+      <if test="user != null" >
+        user,
+      </if>
+      <if test="account != null" >
+        account,
+      </if>
+      <if test="server != null" >
+        server,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="starttime != null" >
+        startTime,
+      </if>
+      <if test="endtime != null" >
+        endTime,
+      </if>
+      <if test="totaltime != null" >
+        totalTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="missionname != null" >
+        #{missionname,jdbcType=VARCHAR},
+      </if>
+      <if test="user != null" >
+        #{user,jdbcType=VARCHAR},
+      </if>
+      <if test="account != null" >
+        #{account,jdbcType=VARCHAR},
+      </if>
+      <if test="server != null" >
+        #{server,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="starttime != null" >
+        #{starttime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endtime != null" >
+        #{endtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="totaltime != null" >
+        #{totaltime,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.souche.salt_common_01.entity.JobsLogExample" resultType="java.lang.Integer" >
+    select count(*) from jobsLog
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update jobsLog
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=VARCHAR},
+      </if>
+      <if test="record.missionname != null" >
+        missionName = #{record.missionname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.user != null" >
+        user = #{record.user,jdbcType=VARCHAR},
+      </if>
+      <if test="record.account != null" >
+        account = #{record.account,jdbcType=VARCHAR},
+      </if>
+      <if test="record.server != null" >
+        server = #{record.server,jdbcType=VARCHAR},
+      </if>
+      <if test="record.status != null" >
+        status = #{record.status,jdbcType=VARCHAR},
+      </if>
+      <if test="record.starttime != null" >
+        startTime = #{record.starttime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.endtime != null" >
+        endTime = #{record.endtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.totaltime != null" >
+        totalTime = #{record.totaltime,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update jobsLog
+    set id = #{record.id,jdbcType=VARCHAR},
+      missionName = #{record.missionname,jdbcType=VARCHAR},
+      user = #{record.user,jdbcType=VARCHAR},
+      account = #{record.account,jdbcType=VARCHAR},
+      server = #{record.server,jdbcType=VARCHAR},
+      status = #{record.status,jdbcType=VARCHAR},
+      startTime = #{record.starttime,jdbcType=TIMESTAMP},
+      endTime = #{record.endtime,jdbcType=TIMESTAMP},
+      totalTime = #{record.totaltime,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+</mapper>

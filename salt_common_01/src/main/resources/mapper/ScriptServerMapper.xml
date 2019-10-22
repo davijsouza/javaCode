@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.souche.salt_common_01.mapper.ScriptServerMapper" >
+  <resultMap id="BaseResultMap" type="com.souche.salt_common_01.entity.ScriptServer" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="account" property="account" jdbcType="VARCHAR" />
+    <result column="scriptId" property="scriptId" jdbcType="VARCHAR" />
+    <result column="instanceId" property="instanceId" jdbcType="VARCHAR" />
+    <result column="szoneName" property="szoneName" jdbcType="VARCHAR" />
+    <result column="sdoMainName" property="sdoMainName" jdbcType="VARCHAR" />
+    <result column="productLineName" property="productLineName" jdbcType="VARCHAR" />
+    <result column="productName" property="productName" jdbcType="VARCHAR" />
+    <result column="applicationName" property="applicationName" jdbcType="VARCHAR" />
+    <result column="instanceName" property="instanceName" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, account, scriptId, instanceId, szoneName, sdoMainName, productLineName, productName, 
+    applicationName, instanceName
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.souche.salt_common_01.entity.ScriptServerExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from scriptServer
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from scriptServer
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from scriptServer
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.souche.salt_common_01.entity.ScriptServerExample" >
+    delete from scriptServer
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.souche.salt_common_01.entity.ScriptServer" >
+    insert into scriptServer (id, account, scriptId, 
+      instanceId, szoneName, sdoMainName, 
+      productLineName, productName, applicationName, 
+      instanceName)
+    values (#{id,jdbcType=INTEGER}, #{account,jdbcType=VARCHAR}, #{scriptId,jdbcType=VARCHAR}, 
+      #{instanceId,jdbcType=VARCHAR}, #{szoneName,jdbcType=VARCHAR}, #{sdoMainName,jdbcType=VARCHAR}, 
+      #{productLineName,jdbcType=VARCHAR}, #{productName,jdbcType=VARCHAR}, #{applicationName,jdbcType=VARCHAR}, 
+      #{instanceName,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.souche.salt_common_01.entity.ScriptServer" >
+    insert into scriptServer
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="account != null" >
+        account,
+      </if>
+      <if test="scriptId != null" >
+        scriptId,
+      </if>
+      <if test="instanceId != null" >
+        instanceId,
+      </if>
+      <if test="szoneName != null" >
+        szoneName,
+      </if>
+      <if test="sdoMainName != null" >
+        sdoMainName,
+      </if>
+      <if test="productLineName != null" >
+        productLineName,
+      </if>
+      <if test="productName != null" >
+        productName,
+      </if>
+      <if test="applicationName != null" >
+        applicationName,
+      </if>
+      <if test="instanceName != null" >
+        instanceName,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="account != null" >
+        #{account,jdbcType=VARCHAR},
+      </if>
+      <if test="scriptId != null" >
+        #{scriptId,jdbcType=VARCHAR},
+      </if>
+      <if test="instanceId != null" >
+        #{instanceId,jdbcType=VARCHAR},
+      </if>
+      <if test="szoneName != null" >
+        #{szoneName,jdbcType=VARCHAR},
+      </if>
+      <if test="sdoMainName != null" >
+        #{sdoMainName,jdbcType=VARCHAR},
+      </if>
+      <if test="productLineName != null" >
+        #{productLineName,jdbcType=VARCHAR},
+      </if>
+      <if test="productName != null" >
+        #{productName,jdbcType=VARCHAR},
+      </if>
+      <if test="applicationName != null" >
+        #{applicationName,jdbcType=VARCHAR},
+      </if>
+      <if test="instanceName != null" >
+        #{instanceName,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.souche.salt_common_01.entity.ScriptServerExample" resultType="java.lang.Integer" >
+    select count(*) from scriptServer
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update scriptServer
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.account != null" >
+        account = #{record.account,jdbcType=VARCHAR},
+      </if>
+      <if test="record.scriptId != null" >
+        scriptId = #{record.scriptId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.instanceId != null" >
+        instanceId = #{record.instanceId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.szoneName != null" >
+        szoneName = #{record.szoneName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.sdoMainName != null" >
+        sdoMainName = #{record.sdoMainName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.productLineName != null" >
+        productLineName = #{record.productLineName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.productName != null" >
+        productName = #{record.productName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.applicationName != null" >
+        applicationName = #{record.applicationName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.instanceName != null" >
+        instanceName = #{record.instanceName,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update scriptServer
+    set id = #{record.id,jdbcType=INTEGER},
+      account = #{record.account,jdbcType=VARCHAR},
+      scriptId = #{record.scriptId,jdbcType=VARCHAR},
+      instanceId = #{record.instanceId,jdbcType=VARCHAR},
+      szoneName = #{record.szoneName,jdbcType=VARCHAR},
+      sdoMainName = #{record.sdoMainName,jdbcType=VARCHAR},
+      productLineName = #{record.productLineName,jdbcType=VARCHAR},
+      productName = #{record.productName,jdbcType=VARCHAR},
+      applicationName = #{record.applicationName,jdbcType=VARCHAR},
+      instanceName = #{record.instanceName,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.souche.salt_common_01.entity.ScriptServer" >
+    update scriptServer
+    <set >
+      <if test="account != null" >
+        account = #{account,jdbcType=VARCHAR},
+      </if>
+      <if test="scriptId != null" >
+        scriptId = #{scriptId,jdbcType=VARCHAR},
+      </if>
+      <if test="instanceId != null" >
+        instanceId = #{instanceId,jdbcType=VARCHAR},
+      </if>
+      <if test="szoneName != null" >
+        szoneName = #{szoneName,jdbcType=VARCHAR},
+      </if>
+      <if test="sdoMainName != null" >
+        sdoMainName = #{sdoMainName,jdbcType=VARCHAR},
+      </if>
+      <if test="productLineName != null" >
+        productLineName = #{productLineName,jdbcType=VARCHAR},
+      </if>
+      <if test="productName != null" >
+        productName = #{productName,jdbcType=VARCHAR},
+      </if>
+      <if test="applicationName != null" >
+        applicationName = #{applicationName,jdbcType=VARCHAR},
+      </if>
+      <if test="instanceName != null" >
+        instanceName = #{instanceName,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.souche.salt_common_01.entity.ScriptServer" >
+    update scriptServer
+    set account = #{account,jdbcType=VARCHAR},
+      scriptId = #{scriptId,jdbcType=VARCHAR},
+      instanceId = #{instanceId,jdbcType=VARCHAR},
+      szoneName = #{szoneName,jdbcType=VARCHAR},
+      sdoMainName = #{sdoMainName,jdbcType=VARCHAR},
+      productLineName = #{productLineName,jdbcType=VARCHAR},
+      productName = #{productName,jdbcType=VARCHAR},
+      applicationName = #{applicationName,jdbcType=VARCHAR},
+      instanceName = #{instanceName,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

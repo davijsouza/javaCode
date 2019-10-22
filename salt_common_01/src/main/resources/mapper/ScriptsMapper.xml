@@ -1,0 +1,454 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.souche.salt_common_01.mapper.ScriptsMapper" >
+  <resultMap id="BaseResultMap" type="com.souche.salt_common_01.entity.Scripts" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="creater" property="creater" jdbcType="VARCHAR" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="lastMofityUser" property="lastMofityUser" jdbcType="VARCHAR" />
+    <result column="lastModifyTime" property="lastModifyTime" jdbcType="TIMESTAMP" />
+    <result column="isCommon" property="isCommon" jdbcType="VARCHAR" />
+    <result column="idDeleted" property="idDeleted" jdbcType="VARCHAR" />
+    <result column="orderNum" property="orderNum" jdbcType="INTEGER" />
+    <result column="pause" property="pause" jdbcType="VARCHAR" />
+    <result column="saltSname" property="saltSname" jdbcType="VARCHAR" />
+    <result column="data1" property="data1" jdbcType="VARCHAR" />
+    <result column="data2" property="data2" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.souche.salt_common_01.entity.Scripts" extends="BaseResultMap" >
+    <result column="content" property="content" jdbcType="LONGVARCHAR" />
+  </resultMap>
+
+  <select id="findAllScripts" parameterType="java.util.Map" resultMap="ResultMapWithBLOBs">
+
+    select  * from scripts
+    <where>
+      <if test="scriptName!=null and scriptName!=''">
+        instr(name,#{scriptName})&gt;0
+      </if>
+      <if test="creater!=null and creater !=''">
+        instr(creater,#{creater})&gt;0
+      </if>
+
+      and idDeleted='no' and isCommon='yes' order by createTime desc
+    </where>
+
+
+  </select>
+  <!--查询私有脚本-->
+  <select id="queryPriScript1"   resultMap="ResultMapWithBLOBs">
+    select * from scripts
+  </select>
+  <select id="queryPriScript" resultMap="ResultMapWithBLOBs">
+    select * from scripts where idDeleted='no' and isCommon='no'
+    <if test="scriptName!=null and scriptName!=''">
+      and instr(name,#{scriptName})&gt;0
+    </if>
+    <if test="user!='admin'">
+      and creater =#{user}
+    </if>
+    order by createTime desc
+  </select>
+
+
+  <select id="selectByJobIdAndOrderNum"  resultMap="ResultMapWithBLOBs">
+   select * from scripts where idDeleted=#{jobId} and orderNum=#{step}
+  </select>
+
+
+
+
+
+
+
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, name, creater, createTime, lastMofityUser, lastModifyTime, isCommon, idDeleted,
+    orderNum, pause, saltSname, data1, data2
+  </sql>
+  <sql id="Blob_Column_List" >
+    content
+  </sql>
+  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="com.souche.salt_common_01.entity.ScriptsExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from scripts
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.souche.salt_common_01.entity.ScriptsExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from scripts
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from scripts
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from scripts
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.souche.salt_common_01.entity.ScriptsExample" >
+    delete from scripts
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.souche.salt_common_01.entity.Scripts" >
+    insert into scripts (id, name, creater,
+      createTime, lastMofityUser, lastModifyTime,
+      isCommon, idDeleted, orderNum,
+      pause, saltSname, data1,
+      data2, content)
+    values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{creater,jdbcType=VARCHAR},
+      #{createTime,jdbcType=TIMESTAMP}, #{lastMofityUser,jdbcType=VARCHAR}, #{lastModifyTime,jdbcType=TIMESTAMP},
+      #{isCommon,jdbcType=VARCHAR}, #{idDeleted,jdbcType=VARCHAR}, #{orderNum,jdbcType=INTEGER},
+      #{pause,jdbcType=VARCHAR}, #{saltSname,jdbcType=VARCHAR}, #{data1,jdbcType=VARCHAR},
+      #{data2,jdbcType=VARCHAR}, #{content,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.souche.salt_common_01.entity.Scripts" >
+    insert into scripts
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="creater != null" >
+        creater,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+      <if test="lastMofityUser != null" >
+        lastMofityUser,
+      </if>
+      <if test="lastModifyTime != null" >
+        lastModifyTime,
+      </if>
+      <if test="isCommon != null" >
+        isCommon,
+      </if>
+      <if test="idDeleted != null" >
+        idDeleted,
+      </if>
+      <if test="orderNum != null" >
+        orderNum,
+      </if>
+      <if test="pause != null" >
+        pause,
+      </if>
+      <if test="saltSname != null" >
+        saltSname,
+      </if>
+      <if test="data1 != null" >
+        data1,
+      </if>
+      <if test="data2 != null" >
+        data2,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="creater != null" >
+        #{creater,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastMofityUser != null" >
+        #{lastMofityUser,jdbcType=VARCHAR},
+      </if>
+      <if test="lastModifyTime != null" >
+        #{lastModifyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isCommon != null" >
+        #{isCommon,jdbcType=VARCHAR},
+      </if>
+      <if test="idDeleted != null" >
+        #{idDeleted,jdbcType=VARCHAR},
+      </if>
+      <if test="orderNum != null" >
+        #{orderNum,jdbcType=INTEGER},
+      </if>
+      <if test="pause != null" >
+        #{pause,jdbcType=VARCHAR},
+      </if>
+      <if test="saltSname != null" >
+        #{saltSname,jdbcType=VARCHAR},
+      </if>
+      <if test="data1 != null" >
+        #{data1,jdbcType=VARCHAR},
+      </if>
+      <if test="data2 != null" >
+        #{data2,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.souche.salt_common_01.entity.ScriptsExample" resultType="java.lang.Integer" >
+    select count(*) from scripts
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update scripts
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=VARCHAR},
+      </if>
+      <if test="record.name != null" >
+        name = #{record.name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.creater != null" >
+        creater = #{record.creater,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null" >
+        createTime = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.lastMofityUser != null" >
+        lastMofityUser = #{record.lastMofityUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.lastModifyTime != null" >
+        lastModifyTime = #{record.lastModifyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.isCommon != null" >
+        isCommon = #{record.isCommon,jdbcType=VARCHAR},
+      </if>
+      <if test="record.idDeleted != null" >
+        idDeleted = #{record.idDeleted,jdbcType=VARCHAR},
+      </if>
+      <if test="record.orderNum != null" >
+        orderNum = #{record.orderNum,jdbcType=INTEGER},
+      </if>
+      <if test="record.pause != null" >
+        pause = #{record.pause,jdbcType=VARCHAR},
+      </if>
+      <if test="record.saltSname != null" >
+        saltSname = #{record.saltSname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.data1 != null" >
+        data1 = #{record.data1,jdbcType=VARCHAR},
+      </if>
+      <if test="record.data2 != null" >
+        data2 = #{record.data2,jdbcType=VARCHAR},
+      </if>
+      <if test="record.content != null" >
+        content = #{record.content,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map" >
+    update scripts
+    set id = #{record.id,jdbcType=VARCHAR},
+      name = #{record.name,jdbcType=VARCHAR},
+      creater = #{record.creater,jdbcType=VARCHAR},
+      createTime = #{record.createTime,jdbcType=TIMESTAMP},
+      lastMofityUser = #{record.lastMofityUser,jdbcType=VARCHAR},
+      lastModifyTime = #{record.lastModifyTime,jdbcType=TIMESTAMP},
+      isCommon = #{record.isCommon,jdbcType=VARCHAR},
+      idDeleted = #{record.idDeleted,jdbcType=VARCHAR},
+      orderNum = #{record.orderNum,jdbcType=INTEGER},
+      pause = #{record.pause,jdbcType=VARCHAR},
+      saltSname = #{record.saltSname,jdbcType=VARCHAR},
+      data1 = #{record.data1,jdbcType=VARCHAR},
+      data2 = #{record.data2,jdbcType=VARCHAR},
+      content = #{record.content,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update scripts
+    set id = #{record.id,jdbcType=VARCHAR},
+      name = #{record.name,jdbcType=VARCHAR},
+      creater = #{record.creater,jdbcType=VARCHAR},
+      createTime = #{record.createTime,jdbcType=TIMESTAMP},
+      lastMofityUser = #{record.lastMofityUser,jdbcType=VARCHAR},
+      lastModifyTime = #{record.lastModifyTime,jdbcType=TIMESTAMP},
+      isCommon = #{record.isCommon,jdbcType=VARCHAR},
+      idDeleted = #{record.idDeleted,jdbcType=VARCHAR},
+      orderNum = #{record.orderNum,jdbcType=INTEGER},
+      pause = #{record.pause,jdbcType=VARCHAR},
+      saltSname = #{record.saltSname,jdbcType=VARCHAR},
+      data1 = #{record.data1,jdbcType=VARCHAR},
+      data2 = #{record.data2,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.souche.salt_common_01.entity.Scripts" >
+    update scripts
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="creater != null" >
+        creater = #{creater,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastMofityUser != null" >
+        lastMofityUser = #{lastMofityUser,jdbcType=VARCHAR},
+      </if>
+      <if test="lastModifyTime != null" >
+        lastModifyTime = #{lastModifyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isCommon != null" >
+        isCommon = #{isCommon,jdbcType=VARCHAR},
+      </if>
+      <if test="idDeleted != null" >
+        idDeleted = #{idDeleted,jdbcType=VARCHAR},
+      </if>
+      <if test="orderNum != null" >
+        orderNum = #{orderNum,jdbcType=INTEGER},
+      </if>
+      <if test="pause != null" >
+        pause = #{pause,jdbcType=VARCHAR},
+      </if>
+      <if test="saltSname != null" >
+        saltSname = #{saltSname,jdbcType=VARCHAR},
+      </if>
+      <if test="data1 != null" >
+        data1 = #{data1,jdbcType=VARCHAR},
+      </if>
+      <if test="data2 != null" >
+        data2 = #{data2,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.souche.salt_common_01.entity.Scripts" >
+    update scripts
+    set name = #{name,jdbcType=VARCHAR},
+      creater = #{creater,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      lastMofityUser = #{lastMofityUser,jdbcType=VARCHAR},
+      lastModifyTime = #{lastModifyTime,jdbcType=TIMESTAMP},
+      isCommon = #{isCommon,jdbcType=VARCHAR},
+      idDeleted = #{idDeleted,jdbcType=VARCHAR},
+      orderNum = #{orderNum,jdbcType=INTEGER},
+      pause = #{pause,jdbcType=VARCHAR},
+      saltSname = #{saltSname,jdbcType=VARCHAR},
+      data1 = #{data1,jdbcType=VARCHAR},
+      data2 = #{data2,jdbcType=VARCHAR},
+      content = #{content,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.souche.salt_common_01.entity.Scripts" >
+    update scripts
+    set name = #{name,jdbcType=VARCHAR},
+      creater = #{creater,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      lastMofityUser = #{lastMofityUser,jdbcType=VARCHAR},
+      lastModifyTime = #{lastModifyTime,jdbcType=TIMESTAMP},
+      isCommon = #{isCommon,jdbcType=VARCHAR},
+      idDeleted = #{idDeleted,jdbcType=VARCHAR},
+      orderNum = #{orderNum,jdbcType=INTEGER},
+      pause = #{pause,jdbcType=VARCHAR},
+      saltSname = #{saltSname,jdbcType=VARCHAR},
+      data1 = #{data1,jdbcType=VARCHAR},
+      data2 = #{data2,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

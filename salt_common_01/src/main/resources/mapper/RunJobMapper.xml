@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.souche.salt_common_01.mapper.RunJobMapper" >
+  <resultMap id="BaseResultMap" type="com.souche.salt_common_01.entity.RunJob" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="jobId" property="jobId" jdbcType="VARCHAR" />
+    <result column="jobLogId" property="jobLogId" jdbcType="VARCHAR" />
+    <result column="step" property="step" jdbcType="INTEGER" />
+    <result column="totalStep" property="totalStep" jdbcType="VARCHAR" />
+    <result column="stepStatus" property="stepStatus" jdbcType="VARCHAR" />
+    <result column="jobName" property="jobName" jdbcType="VARCHAR" />
+    <result column="startTime" property="startTime" jdbcType="TIMESTAMP" />
+    <result column="user" property="user" jdbcType="VARCHAR" />
+    <result column="finish" property="finish" jdbcType="VARCHAR" />
+    <result column="mode" property="mode" jdbcType="VARCHAR" />
+    <result column="step1" property="step1" jdbcType="VARCHAR" />
+    <result column="step2" property="step2" jdbcType="VARCHAR" />
+    <result column="step3" property="step3" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, jobId, jobLogId, step, totalStep, stepStatus, jobName, startTime, user, finish, 
+    mode, step1, step2, step3
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.souche.salt_common_01.entity.RunJobExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from runJob
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from runJob
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from runJob
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.souche.salt_common_01.entity.RunJobExample" >
+    delete from runJob
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.souche.salt_common_01.entity.RunJob" >
+    insert into runJob (id, jobId, jobLogId, 
+      step, totalStep, stepStatus, 
+      jobName, startTime, user, 
+      finish, mode, step1, 
+      step2, step3)
+    values (#{id,jdbcType=VARCHAR}, #{jobId,jdbcType=VARCHAR}, #{jobLogId,jdbcType=VARCHAR}, 
+      #{step,jdbcType=INTEGER}, #{totalStep,jdbcType=VARCHAR}, #{stepStatus,jdbcType=VARCHAR}, 
+      #{jobName,jdbcType=VARCHAR}, #{startTime,jdbcType=TIMESTAMP}, #{user,jdbcType=VARCHAR}, 
+      #{finish,jdbcType=VARCHAR}, #{mode,jdbcType=VARCHAR}, #{step1,jdbcType=VARCHAR}, 
+      #{step2,jdbcType=VARCHAR}, #{step3,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.souche.salt_common_01.entity.RunJob" >
+    insert into runJob
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="jobId != null" >
+        jobId,
+      </if>
+      <if test="jobLogId != null" >
+        jobLogId,
+      </if>
+      <if test="step != null" >
+        step,
+      </if>
+      <if test="totalStep != null" >
+        totalStep,
+      </if>
+      <if test="stepStatus != null" >
+        stepStatus,
+      </if>
+      <if test="jobName != null" >
+        jobName,
+      </if>
+      <if test="startTime != null" >
+        startTime,
+      </if>
+      <if test="user != null" >
+        user,
+      </if>
+      <if test="finish != null" >
+        finish,
+      </if>
+      <if test="mode != null" >
+        mode,
+      </if>
+      <if test="step1 != null" >
+        step1,
+      </if>
+      <if test="step2 != null" >
+        step2,
+      </if>
+      <if test="step3 != null" >
+        step3,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="jobId != null" >
+        #{jobId,jdbcType=VARCHAR},
+      </if>
+      <if test="jobLogId != null" >
+        #{jobLogId,jdbcType=VARCHAR},
+      </if>
+      <if test="step != null" >
+        #{step,jdbcType=INTEGER},
+      </if>
+      <if test="totalStep != null" >
+        #{totalStep,jdbcType=VARCHAR},
+      </if>
+      <if test="stepStatus != null" >
+        #{stepStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="jobName != null" >
+        #{jobName,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null" >
+        #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="user != null" >
+        #{user,jdbcType=VARCHAR},
+      </if>
+      <if test="finish != null" >
+        #{finish,jdbcType=VARCHAR},
+      </if>
+      <if test="mode != null" >
+        #{mode,jdbcType=VARCHAR},
+      </if>
+      <if test="step1 != null" >
+        #{step1,jdbcType=VARCHAR},
+      </if>
+      <if test="step2 != null" >
+        #{step2,jdbcType=VARCHAR},
+      </if>
+      <if test="step3 != null" >
+        #{step3,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.souche.salt_common_01.entity.RunJobExample" resultType="java.lang.Integer" >
+    select count(*) from runJob
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update runJob
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=VARCHAR},
+      </if>
+      <if test="record.jobId != null" >
+        jobId = #{record.jobId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.jobLogId != null" >
+        jobLogId = #{record.jobLogId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.step != null" >
+        step = #{record.step,jdbcType=INTEGER},
+      </if>
+      <if test="record.totalStep != null" >
+        totalStep = #{record.totalStep,jdbcType=VARCHAR},
+      </if>
+      <if test="record.stepStatus != null" >
+        stepStatus = #{record.stepStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="record.jobName != null" >
+        jobName = #{record.jobName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.startTime != null" >
+        startTime = #{record.startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.user != null" >
+        user = #{record.user,jdbcType=VARCHAR},
+      </if>
+      <if test="record.finish != null" >
+        finish = #{record.finish,jdbcType=VARCHAR},
+      </if>
+      <if test="record.mode != null" >
+        mode = #{record.mode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.step1 != null" >
+        step1 = #{record.step1,jdbcType=VARCHAR},
+      </if>
+      <if test="record.step2 != null" >
+        step2 = #{record.step2,jdbcType=VARCHAR},
+      </if>
+      <if test="record.step3 != null" >
+        step3 = #{record.step3,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update runJob
+    set id = #{record.id,jdbcType=VARCHAR},
+      jobId = #{record.jobId,jdbcType=VARCHAR},
+      jobLogId = #{record.jobLogId,jdbcType=VARCHAR},
+      step = #{record.step,jdbcType=INTEGER},
+      totalStep = #{record.totalStep,jdbcType=VARCHAR},
+      stepStatus = #{record.stepStatus,jdbcType=VARCHAR},
+      jobName = #{record.jobName,jdbcType=VARCHAR},
+      startTime = #{record.startTime,jdbcType=TIMESTAMP},
+      user = #{record.user,jdbcType=VARCHAR},
+      finish = #{record.finish,jdbcType=VARCHAR},
+      mode = #{record.mode,jdbcType=VARCHAR},
+      step1 = #{record.step1,jdbcType=VARCHAR},
+      step2 = #{record.step2,jdbcType=VARCHAR},
+      step3 = #{record.step3,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.souche.salt_common_01.entity.RunJob" >
+    update runJob
+    <set >
+      <if test="jobId != null" >
+        jobId = #{jobId,jdbcType=VARCHAR},
+      </if>
+      <if test="jobLogId != null" >
+        jobLogId = #{jobLogId,jdbcType=VARCHAR},
+      </if>
+      <if test="step != null" >
+        step = #{step,jdbcType=INTEGER},
+      </if>
+      <if test="totalStep != null" >
+        totalStep = #{totalStep,jdbcType=VARCHAR},
+      </if>
+      <if test="stepStatus != null" >
+        stepStatus = #{stepStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="jobName != null" >
+        jobName = #{jobName,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null" >
+        startTime = #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="user != null" >
+        user = #{user,jdbcType=VARCHAR},
+      </if>
+      <if test="finish != null" >
+        finish = #{finish,jdbcType=VARCHAR},
+      </if>
+      <if test="mode != null" >
+        mode = #{mode,jdbcType=VARCHAR},
+      </if>
+      <if test="step1 != null" >
+        step1 = #{step1,jdbcType=VARCHAR},
+      </if>
+      <if test="step2 != null" >
+        step2 = #{step2,jdbcType=VARCHAR},
+      </if>
+      <if test="step3 != null" >
+        step3 = #{step3,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.souche.salt_common_01.entity.RunJob" >
+    update runJob
+    set jobId = #{jobId,jdbcType=VARCHAR},
+      jobLogId = #{jobLogId,jdbcType=VARCHAR},
+      step = #{step,jdbcType=INTEGER},
+      totalStep = #{totalStep,jdbcType=VARCHAR},
+      stepStatus = #{stepStatus,jdbcType=VARCHAR},
+      jobName = #{jobName,jdbcType=VARCHAR},
+      startTime = #{startTime,jdbcType=TIMESTAMP},
+      user = #{user,jdbcType=VARCHAR},
+      finish = #{finish,jdbcType=VARCHAR},
+      mode = #{mode,jdbcType=VARCHAR},
+      step1 = #{step1,jdbcType=VARCHAR},
+      step2 = #{step2,jdbcType=VARCHAR},
+      step3 = #{step3,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

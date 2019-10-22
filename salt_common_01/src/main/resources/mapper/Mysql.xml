@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.souche.salt_common_01.mapper.MySqlMapper" >
+  <!--<resultMap id="BaseResultMap" type="com.souche.salt_common_01.entity.RunJob" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="jobId" property="jobId" jdbcType="VARCHAR" />
+    <result column="jobLogId" property="jobLogId" jdbcType="VARCHAR" />
+    <result column="step" property="step" jdbcType="INTEGER" />
+    <result column="totalStep" property="totalStep" jdbcType="VARCHAR" />
+    <result column="stepStatus" property="stepStatus" jdbcType="VARCHAR" />
+    <result column="jobName" property="jobName" jdbcType="VARCHAR" />
+    <result column="startTime" property="startTime" jdbcType="TIMESTAMP" />
+    <result column="user" property="user" jdbcType="VARCHAR" />
+    <result column="finish" property="finish" jdbcType="VARCHAR" />
+    <result column="mode" property="mode" jdbcType="VARCHAR" />
+    <result column="step1" property="step1" jdbcType="VARCHAR" />
+    <result column="step2" property="step2" jdbcType="VARCHAR" />
+    <result column="step3" property="step3" jdbcType="VARCHAR" />
+  </resultMap>-->
+  <resultMap id="relationMap" type="relation">
+    <id column="id" property="id"></id>
+    <result column="instanceId" property="instanceId"></result>
+    <result column="instanceId" property="instanceName"></result>
+  </resultMap>
+<insert id="addrelation">
+  insert into relation(id,instanceId) values(null,#{instanceId})
+</insert>
+  <select id="findAll" resultMap="relationMap">
+    select * from relation
+  </select>
+<!--
+     SELECT * from  jobsLog where id in
+         (SELECT DISTINCT id from jobsLog where status='执行失败' and account='Tjob'
+                                and date(startTime)=DATE_SUB(curdate(),INTERVAL 1 DAY))-->
+  <select id="findFailJob" resultType="JobsLog">
+               SELECT DISTINCT missionName,user from jobsLog where status='执行失败' and account='Tjob'
+               and date(startTime)=DATE_SUB(curdate(),INTERVAL 1 DAY)
+  </select>
+  <select id="failJobs" resultType="JobsLog">
+               SELECT DISTINCT missionName,user from jobsLog where status='执行失败' and account='Tjob'
+               and date(startTime)=DATE_SUB(curdate(),INTERVAL 1 DAY) and user=#{loginName}
+  </select>
+</mapper>

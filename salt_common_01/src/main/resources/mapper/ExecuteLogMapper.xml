@@ -1,0 +1,469 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.souche.salt_common_01.mapper.ExecuteLogMapper" >
+  <resultMap id="BaseResultMap" type="com.souche.salt_common_01.entity.ExecuteLog" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="missionName" property="missionname" jdbcType="VARCHAR" />
+    <result column="user" property="user" jdbcType="VARCHAR" />
+    <result column="account" property="account" jdbcType="VARCHAR" />
+    <result column="server" property="server" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="startTime" property="starttime" jdbcType="TIMESTAMP" />
+    <result column="endTime" property="endtime" jdbcType="TIMESTAMP" />
+    <result column="totalTime" property="totaltime" jdbcType="VARCHAR" />
+    <result column="isJob" property="isjob" jdbcType="VARCHAR" />
+    <result column="jobId" property="jobid" jdbcType="VARCHAR" />
+    <result column="orderNum" property="ordernum" jdbcType="INTEGER" />
+    <result column="scriptId" property="scriptid" jdbcType="VARCHAR" />
+    <result column="serverId" property="serverId" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.souche.salt_common_01.entity.ExecuteLog" extends="BaseResultMap" >
+    <result column="output" property="output" jdbcType="LONGVARCHAR" />
+  </resultMap>
+
+  <!--我自己的sql-->
+  <!--从日志查找作业下的脚本-->
+  <select id="jobLogScript" resultMap="ResultMapWithBLOBs" >
+  select  *  from executeLog where id in(
+      select max(id)  from executeLog
+      <where>
+        jobId=#{jobId}
+         <if test="startTime!=null">
+          and startTime &gt;=  #{startTime}
+        </if>
+          <if test="endTime!=null">
+          and endTime &lt;=  #{endTime}
+        </if>
+      </where>
+      GROUP BY scriptId)
+  </select>
+
+  <select id="stepJobLogScript" resultMap="ResultMapWithBLOBs" >
+  select  *  from executeLog where id in(
+      select max(id)  from executeLog
+       where jobId=#{jobId}
+      GROUP BY scriptId)
+  </select>
+  <!--查找某个作业执行的服务器数量-->
+  <select id="getServerNum" resultType= "int" >
+    select DISTINCT(count(1)) from executeLog
+     where jobId=#{jobId}
+           and startTime =  #{startTime}
+              and endTime = #{endTime}
+                GROUP BY scriptId
+  </select>
+  <!--查询某个脚本在多台服务器下执行的结果-->
+    <select id="jobLogScripResult" resultMap="ResultMapWithBLOBs">
+      select server,output from executeLog
+         where missionName=#{scriptName}
+           and startTime =  #{startTime}
+              and endTime = #{endTime}
+
+    </select>
+
+  <select id="jobLogScripResult2" resultMap="ResultMapWithBLOBs">
+      select server,output from executeLog
+         where jobId=#{jobLogId}
+           and scriptId =  #{scriptId}
+  </select>
+
+
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, missionName, user, account, server, status, startTime, endTime, totalTime, isJob,
+    jobId, orderNum, scriptId,serverId
+  </sql>
+  <sql id="Blob_Column_List" >
+    output
+  </sql>
+  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="com.souche.salt_common_01.entity.ExecuteLogExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from executeLog
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.souche.salt_common_01.entity.ExecuteLogExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from executeLog
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from executeLog
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from executeLog
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.souche.salt_common_01.entity.ExecuteLogExample" >
+    delete from executeLog
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.souche.salt_common_01.entity.ExecuteLog" >
+    insert into executeLog (id, missionName, user,
+      account, server, status,
+      startTime, endTime, totalTime,
+      isJob, jobId, orderNum,
+      scriptId, output,serverId)
+    values (#{id,jdbcType=INTEGER}, #{missionname,jdbcType=VARCHAR}, #{user,jdbcType=VARCHAR},
+      #{account,jdbcType=VARCHAR}, #{server,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR},
+      #{starttime,jdbcType=TIMESTAMP}, #{endtime,jdbcType=TIMESTAMP}, #{totaltime,jdbcType=VARCHAR},
+      #{isjob,jdbcType=VARCHAR}, #{jobid,jdbcType=VARCHAR}, #{ordernum,jdbcType=INTEGER},
+      #{scriptid,jdbcType=VARCHAR}, #{output,jdbcType=LONGVARCHAR},#{serverId})
+  </insert>
+  <insert id="insertSelective" parameterType="com.souche.salt_common_01.entity.ExecuteLog" >
+    insert into executeLog
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="missionname != null" >
+        missionName,
+      </if>
+      <if test="user != null" >
+        user,
+      </if>
+      <if test="account != null" >
+        account,
+      </if>
+      <if test="server != null" >
+        server,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="starttime != null" >
+        startTime,
+      </if>
+      <if test="endtime != null" >
+        endTime,
+      </if>
+      <if test="totaltime != null" >
+        totalTime,
+      </if>
+      <if test="isjob != null" >
+        isJob,
+      </if>
+      <if test="jobid != null" >
+        jobId,
+      </if>
+      <if test="ordernum != null" >
+        orderNum,
+      </if>
+      <if test="scriptid != null" >
+        scriptId,
+      </if>
+      <if test="output != null" >
+        output,
+      </if>
+      <if test="serverId != null" >
+        serverId,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="missionname != null" >
+        #{missionname,jdbcType=VARCHAR},
+      </if>
+      <if test="user != null" >
+        #{user,jdbcType=VARCHAR},
+      </if>
+      <if test="account != null" >
+        #{account,jdbcType=VARCHAR},
+      </if>
+      <if test="server != null" >
+        #{server,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="starttime != null" >
+        #{starttime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endtime != null" >
+        #{endtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="totaltime != null" >
+        #{totaltime,jdbcType=VARCHAR},
+      </if>
+      <if test="isjob != null" >
+        #{isjob,jdbcType=VARCHAR},
+      </if>
+      <if test="jobid != null" >
+        #{jobid,jdbcType=VARCHAR},
+      </if>
+      <if test="ordernum != null" >
+        #{ordernum,jdbcType=INTEGER},
+      </if>
+      <if test="scriptid != null" >
+        #{scriptid,jdbcType=VARCHAR},
+      </if>
+      <if test="output != null" >
+        #{output,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="serverId != null" >
+        #{serverId,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.souche.salt_common_01.entity.ExecuteLogExample" resultType="java.lang.Integer" >
+    select count(*) from executeLog
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update executeLog
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.missionname != null" >
+        missionName = #{record.missionname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.user != null" >
+        user = #{record.user,jdbcType=VARCHAR},
+      </if>
+      <if test="record.account != null" >
+        account = #{record.account,jdbcType=VARCHAR},
+      </if>
+      <if test="record.server != null" >
+        server = #{record.server,jdbcType=VARCHAR},
+      </if>
+      <if test="record.status != null" >
+        status = #{record.status,jdbcType=VARCHAR},
+      </if>
+      <if test="record.starttime != null" >
+        startTime = #{record.starttime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.endtime != null" >
+        endTime = #{record.endtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.totaltime != null" >
+        totalTime = #{record.totaltime,jdbcType=VARCHAR},
+      </if>
+      <if test="record.isjob != null" >
+        isJob = #{record.isjob,jdbcType=VARCHAR},
+      </if>
+      <if test="record.jobid != null" >
+        jobId = #{record.jobid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.ordernum != null" >
+        orderNum = #{record.ordernum,jdbcType=INTEGER},
+      </if>
+      <if test="record.scriptid != null" >
+        scriptId = #{record.scriptid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.output != null" >
+        output = #{record.output,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map" >
+    update executeLog
+    set id = #{record.id,jdbcType=INTEGER},
+      missionName = #{record.missionname,jdbcType=VARCHAR},
+      user = #{record.user,jdbcType=VARCHAR},
+      account = #{record.account,jdbcType=VARCHAR},
+      server = #{record.server,jdbcType=VARCHAR},
+      status = #{record.status,jdbcType=VARCHAR},
+      startTime = #{record.starttime,jdbcType=TIMESTAMP},
+      endTime = #{record.endtime,jdbcType=TIMESTAMP},
+      totalTime = #{record.totaltime,jdbcType=VARCHAR},
+      isJob = #{record.isjob,jdbcType=VARCHAR},
+      jobId = #{record.jobid,jdbcType=VARCHAR},
+      orderNum = #{record.ordernum,jdbcType=INTEGER},
+      scriptId = #{record.scriptid,jdbcType=VARCHAR},
+      output = #{record.output,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update executeLog
+    set id = #{record.id,jdbcType=INTEGER},
+      missionName = #{record.missionname,jdbcType=VARCHAR},
+      user = #{record.user,jdbcType=VARCHAR},
+      account = #{record.account,jdbcType=VARCHAR},
+      server = #{record.server,jdbcType=VARCHAR},
+      status = #{record.status,jdbcType=VARCHAR},
+      startTime = #{record.starttime,jdbcType=TIMESTAMP},
+      endTime = #{record.endtime,jdbcType=TIMESTAMP},
+      totalTime = #{record.totaltime,jdbcType=VARCHAR},
+      isJob = #{record.isjob,jdbcType=VARCHAR},
+      jobId = #{record.jobid,jdbcType=VARCHAR},
+      orderNum = #{record.ordernum,jdbcType=INTEGER},
+      scriptId = #{record.scriptid,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.souche.salt_common_01.entity.ExecuteLog" >
+    update executeLog
+    <set >
+      <if test="missionname != null" >
+        missionName = #{missionname,jdbcType=VARCHAR},
+      </if>
+      <if test="user != null" >
+        user = #{user,jdbcType=VARCHAR},
+      </if>
+      <if test="account != null" >
+        account = #{account,jdbcType=VARCHAR},
+      </if>
+      <if test="server != null" >
+        server = #{server,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="starttime != null" >
+        startTime = #{starttime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endtime != null" >
+        endTime = #{endtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="totaltime != null" >
+        totalTime = #{totaltime,jdbcType=VARCHAR},
+      </if>
+      <if test="isjob != null" >
+        isJob = #{isjob,jdbcType=VARCHAR},
+      </if>
+      <if test="jobid != null" >
+        jobId = #{jobid,jdbcType=VARCHAR},
+      </if>
+      <if test="ordernum != null" >
+        orderNum = #{ordernum,jdbcType=INTEGER},
+      </if>
+      <if test="scriptid != null" >
+        scriptId = #{scriptid,jdbcType=VARCHAR},
+      </if>
+      <if test="output != null" >
+        output = #{output,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="serverId != null" >
+        output = #{serverId,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.souche.salt_common_01.entity.ExecuteLog" >
+    update executeLog
+    set missionName = #{missionname,jdbcType=VARCHAR},
+      user = #{user,jdbcType=VARCHAR},
+      account = #{account,jdbcType=VARCHAR},
+      server = #{server,jdbcType=VARCHAR},
+      status = #{status,jdbcType=VARCHAR},
+      startTime = #{starttime,jdbcType=TIMESTAMP},
+      endTime = #{endtime,jdbcType=TIMESTAMP},
+      totalTime = #{totaltime,jdbcType=VARCHAR},
+      isJob = #{isjob,jdbcType=VARCHAR},
+      jobId = #{jobid,jdbcType=VARCHAR},
+      orderNum = #{ordernum,jdbcType=INTEGER},
+      scriptId = #{scriptid,jdbcType=VARCHAR},
+      output = #{output,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.souche.salt_common_01.entity.ExecuteLog" >
+    update executeLog
+    set missionName = #{missionname,jdbcType=VARCHAR},
+      user = #{user,jdbcType=VARCHAR},
+      account = #{account,jdbcType=VARCHAR},
+      server = #{server,jdbcType=VARCHAR},
+      status = #{status,jdbcType=VARCHAR},
+      startTime = #{starttime,jdbcType=TIMESTAMP},
+      endTime = #{endtime,jdbcType=TIMESTAMP},
+      totalTime = #{totaltime,jdbcType=VARCHAR},
+      isJob = #{isjob,jdbcType=VARCHAR},
+      jobId = #{jobid,jdbcType=VARCHAR},
+      orderNum = #{ordernum,jdbcType=INTEGER},
+      scriptId = #{scriptid,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

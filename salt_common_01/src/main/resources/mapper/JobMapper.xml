@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.souche.salt_common_01.mapper.JobMapper" >
+  <resultMap id="BaseResultMap" type="com.souche.salt_common_01.entity.Job" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="scriptID" property="scriptid" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="sort" property="sort" jdbcType="VARCHAR" />
+    <result column="creater" property="creater" jdbcType="VARCHAR" />
+    <result column="createTime" property="createtime" jdbcType="TIMESTAMP" />
+    <result column="lastModifyUser" property="lastmodifyuser" jdbcType="VARCHAR" />
+    <result column="lastModifyTime" property="lastmodifytime" jdbcType="TIMESTAMP" />
+    <result column="isCommon" property="isCommon" jdbcType="VARCHAR" />
+
+  </resultMap>
+
+  <!--mysql-->
+  <select id="findIdandSort" resultType="java.util.Map">
+    select id ,max(sort) from jobs group by id
+  </select>
+
+
+  <!--删除作业相关脚本-->
+  <delete id="delAboutScript" parameterType="string">
+    delete from scripts where id in
+     (select scriptID from jobs  where id=#{id})
+  </delete>
+
+  <!--删除作业的服务器-->
+<delete id="delAboutSever" parameterType="string">
+ delete from scriptServer where scriptId in
+    (select scriptID from jobs
+               where id =#{id})
+</delete>
+  <!--删除作业的脚本的变量-->
+<delete id="deleteAboutVars" parameterType="string">
+ delete from scriptVar where scriptId in
+    (select scriptID from jobs
+               where id =#{id})
+</delete>
+
+
+  <select id="queryAlljobs"  resultMap="BaseResultMap">
+  select * from  jobs where  isCommon='yes'
+  <if test="name!=null">
+    and instr(name,#{name})>0
+  </if>
+  <if test="creater!=null">
+    and instr(creater,#{creater})>0
+  </if>
+  <if test="startTime!=null">
+    and createTime &gt;#{startTime}
+  </if>
+  <if test="endTime!=null">
+    and createTime &lt;#{endTime}
+  </if>
+    <if test="lastmodifyuser!=null">
+      and  instr(lastmodifyuser,#{lastmodifyuser})&gt;0
+    </if>
+    and scriptID='exist'
+
+    order by createTime desc
+
+
+
+  </select>
+
+  <!---->
+  <select id="queryPrijobs" resultMap="BaseResultMap">
+    select * from  jobs where  isCommon='no' and scriptID='exist'
+
+  <if test="user!='admin'">
+    and creater =#{user}
+  </if>
+      <if test="name!=null">
+          and instr(name,#{name})>0
+      </if>
+
+      <if test="lastmodifyuser!=null">
+          and  instr(lastmodifyuser,#{lastmodifyuser})>0
+      </if>
+    order by createTime desc
+  </select>
+
+<select id="queryJob" parameterType="string" resultType="sonJob">
+  select * from jobs where id=#{id}
+</select>
+
+  <!--    根据jobID查询 作业下的脚本   -->
+  <select id="jobScripts" parameterType="string" resultType="scriptSon">
+    select * from scripts  where idDeleted=#{id}
+</select>
+
+
+
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, scriptID, name, sort, creater, createTime, lastModifyUser, lastModifyTime,isCommon
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.souche.salt_common_01.entity.JobExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from jobs
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from jobs
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from jobs
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.souche.salt_common_01.entity.JobExample" >
+    delete from jobs
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.souche.salt_common_01.entity.Job" >
+    insert into jobs (id, scriptID, name,
+      sort, creater, createTime,
+      lastModifyUser, lastModifyTime,isCommon)
+    values (#{id,jdbcType=VARCHAR}, #{scriptid,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR},
+      #{sort,jdbcType=VARCHAR}, #{creater,jdbcType=VARCHAR}, #{createtime,jdbcType=TIMESTAMP},
+      #{lastmodifyuser,jdbcType=VARCHAR}, #{lastmodifytime,jdbcType=TIMESTAMP},#{isCommon})
+  </insert>
+  <insert id="insertSelective" parameterType="com.souche.salt_common_01.entity.Job" >
+    insert into jobs
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="scriptid != null" >
+        scriptID,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="sort != null" >
+        sort,
+      </if>
+      <if test="creater != null" >
+        creater,
+      </if>
+      <if test="createtime != null" >
+        createTime,
+      </if>
+      <if test="lastmodifyuser != null" >
+        lastModifyUser,
+      </if>
+      <if test="lastmodifytime != null" >
+        lastModifyTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="scriptid != null" >
+        #{scriptid,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="sort != null" >
+        #{sort,jdbcType=VARCHAR},
+      </if>
+      <if test="creater != null" >
+        #{creater,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null" >
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastmodifyuser != null" >
+        #{lastmodifyuser,jdbcType=VARCHAR},
+      </if>
+      <if test="lastmodifytime != null" >
+        #{lastmodifytime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.souche.salt_common_01.entity.JobExample" resultType="java.lang.Integer" >
+    select count(*) from jobs
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update jobs
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=VARCHAR},
+      </if>
+      <if test="record.scriptid != null" >
+        scriptID = #{record.scriptid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.name != null" >
+        name = #{record.name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.sort != null" >
+        sort = #{record.sort,jdbcType=VARCHAR},
+      </if>
+      <if test="record.creater != null" >
+        creater = #{record.creater,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createtime != null" >
+        createTime = #{record.createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.lastmodifyuser != null" >
+        lastModifyUser = #{record.lastmodifyuser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.lastmodifytime != null" >
+        lastModifyTime = #{record.lastmodifytime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.isCommon != null" >
+        isCommon = #{record.isCommon,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update jobs
+    set id = #{record.id,jdbcType=VARCHAR},
+      scriptID = #{record.scriptid,jdbcType=VARCHAR},
+      name = #{record.name,jdbcType=VARCHAR},
+      sort = #{record.sort,jdbcType=VARCHAR},
+      creater = #{record.creater,jdbcType=VARCHAR},
+      createTime = #{record.createtime,jdbcType=TIMESTAMP},
+      lastModifyUser = #{record.lastmodifyuser,jdbcType=VARCHAR},
+      lastModifyTime = #{record.lastmodifytime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.souche.salt_common_01.entity.Job" >
+    update jobs
+    <set >
+      <if test="scriptid != null" >
+        scriptID = #{scriptid,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="sort != null" >
+        sort = #{sort,jdbcType=VARCHAR},
+      </if>
+      <if test="creater != null" >
+        creater = #{creater,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null" >
+        createTime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastmodifyuser != null" >
+        lastModifyUser = #{lastmodifyuser,jdbcType=VARCHAR},
+      </if>
+      <if test="lastmodifytime != null" >
+        lastModifyTime = #{lastmodifytime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.souche.salt_common_01.entity.Job" >
+    update jobs
+    set scriptID = #{scriptid,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      sort = #{sort,jdbcType=VARCHAR},
+      creater = #{creater,jdbcType=VARCHAR},
+      createTime = #{createtime,jdbcType=TIMESTAMP},
+      lastModifyUser = #{lastmodifyuser,jdbcType=VARCHAR},
+      lastModifyTime = #{lastmodifytime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

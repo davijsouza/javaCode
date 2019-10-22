@@ -1,0 +1,550 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.souche.salt_common_01.mapper.ConfigMapper" >
+  <resultMap id="BaseResultMap" type="com.souche.salt_common_01.entity.Config" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="instanceId" property="instanceId" jdbcType="VARCHAR" />
+    <result column="configPath" property="configPath" jdbcType="VARCHAR" />
+    <result column="configName" property="configName" jdbcType="VARCHAR" />
+    <result column="verTime1" property="verTime1" jdbcType="VARCHAR" />
+    <result column="verTime2" property="verTime2" jdbcType="VARCHAR" />
+    <result column="verTime3" property="verTime3" jdbcType="VARCHAR" />
+    <result column="verTime4" property="verTime4" jdbcType="VARCHAR" />
+    <result column="verTime5" property="verTime5" jdbcType="VARCHAR" />
+    <result column="crearer" property="crearer" jdbcType="VARCHAR" />
+    <result column="modify1" property="modify1" jdbcType="VARCHAR" />
+    <result column="modify2" property="modify2" jdbcType="VARCHAR" />
+    <result column="modify3" property="modify3" jdbcType="VARCHAR" />
+    <result column="modify4" property="modify4" jdbcType="VARCHAR" />
+    <result column="modify5" property="modify5" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.souche.salt_common_01.entity.ConfigWithBLOBs" extends="BaseResultMap" >
+    <result column="configContent" property="configContent" jdbcType="LONGVARCHAR" />
+    <result column="version1" property="version1" jdbcType="LONGVARCHAR" />
+    <result column="version2" property="version2" jdbcType="LONGVARCHAR" />
+    <result column="version3" property="version3" jdbcType="LONGVARCHAR" />
+    <result column="version4" property="version4" jdbcType="LONGVARCHAR" />
+    <result column="version5" property="version5" jdbcType="LONGVARCHAR" />
+  </resultMap>
+
+
+  <!--mysql-->
+  <select id="queryLike" resultMap="ResultMapWithBLOBs" resultType="string">
+    select * from config where instr(configContent,#{content})>0
+  </select>
+
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, instanceId, configPath, configName, verTime1, verTime2, verTime3, verTime4, verTime5,
+    crearer, modify1, modify2, modify3, modify4, modify5, status
+  </sql>
+  <sql id="Blob_Column_List" >
+    configContent, version1, version2, version3, version4, version5
+  </sql>
+  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="com.souche.salt_common_01.entity.ConfigExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from config
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.souche.salt_common_01.entity.ConfigExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from config
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from config
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from config
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.souche.salt_common_01.entity.ConfigExample" >
+    delete from config
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.souche.salt_common_01.entity.ConfigWithBLOBs" >
+    insert into config (id, instanceId, configPath,
+      configName, verTime1, verTime2,
+      verTime3, verTime4, verTime5,
+      crearer, modify1, modify2,
+      modify3, modify4, modify5,
+      status, configContent, version1,
+      version2, version3, version4,
+      version5)
+    values (#{id,jdbcType=INTEGER}, #{instanceId,jdbcType=VARCHAR}, #{configPath,jdbcType=VARCHAR},
+      #{configName,jdbcType=VARCHAR}, #{verTime1,jdbcType=VARCHAR}, #{verTime2,jdbcType=VARCHAR},
+      #{verTime3,jdbcType=VARCHAR}, #{verTime4,jdbcType=VARCHAR}, #{verTime5,jdbcType=VARCHAR},
+      #{crearer,jdbcType=VARCHAR}, #{modify1,jdbcType=VARCHAR}, #{modify2,jdbcType=VARCHAR},
+      #{modify3,jdbcType=VARCHAR}, #{modify4,jdbcType=VARCHAR}, #{modify5,jdbcType=VARCHAR},
+      #{status,jdbcType=VARCHAR}, #{configContent,jdbcType=LONGVARCHAR}, #{version1,jdbcType=LONGVARCHAR},
+      #{version2,jdbcType=LONGVARCHAR}, #{version3,jdbcType=LONGVARCHAR}, #{version4,jdbcType=LONGVARCHAR},
+      #{version5,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.souche.salt_common_01.entity.ConfigWithBLOBs" >
+    insert into config
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="instanceId != null" >
+        instanceId,
+      </if>
+      <if test="configPath != null" >
+        configPath,
+      </if>
+      <if test="configName != null" >
+        configName,
+      </if>
+      <if test="verTime1 != null" >
+        verTime1,
+      </if>
+      <if test="verTime2 != null" >
+        verTime2,
+      </if>
+      <if test="verTime3 != null" >
+        verTime3,
+      </if>
+      <if test="verTime4 != null" >
+        verTime4,
+      </if>
+      <if test="verTime5 != null" >
+        verTime5,
+      </if>
+      <if test="crearer != null" >
+        crearer,
+      </if>
+      <if test="modify1 != null" >
+        modify1,
+      </if>
+      <if test="modify2 != null" >
+        modify2,
+      </if>
+      <if test="modify3 != null" >
+        modify3,
+      </if>
+      <if test="modify4 != null" >
+        modify4,
+      </if>
+      <if test="modify5 != null" >
+        modify5,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="configContent != null" >
+        configContent,
+      </if>
+      <if test="version1 != null" >
+        version1,
+      </if>
+      <if test="version2 != null" >
+        version2,
+      </if>
+      <if test="version3 != null" >
+        version3,
+      </if>
+      <if test="version4 != null" >
+        version4,
+      </if>
+      <if test="version5 != null" >
+        version5,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="instanceId != null" >
+        #{instanceId,jdbcType=VARCHAR},
+      </if>
+      <if test="configPath != null" >
+        #{configPath,jdbcType=VARCHAR},
+      </if>
+      <if test="configName != null" >
+        #{configName,jdbcType=VARCHAR},
+      </if>
+      <if test="verTime1 != null" >
+        #{verTime1,jdbcType=VARCHAR},
+      </if>
+      <if test="verTime2 != null" >
+        #{verTime2,jdbcType=VARCHAR},
+      </if>
+      <if test="verTime3 != null" >
+        #{verTime3,jdbcType=VARCHAR},
+      </if>
+      <if test="verTime4 != null" >
+        #{verTime4,jdbcType=VARCHAR},
+      </if>
+      <if test="verTime5 != null" >
+        #{verTime5,jdbcType=VARCHAR},
+      </if>
+      <if test="crearer != null" >
+        #{crearer,jdbcType=VARCHAR},
+      </if>
+      <if test="modify1 != null" >
+        #{modify1,jdbcType=VARCHAR},
+      </if>
+      <if test="modify2 != null" >
+        #{modify2,jdbcType=VARCHAR},
+      </if>
+      <if test="modify3 != null" >
+        #{modify3,jdbcType=VARCHAR},
+      </if>
+      <if test="modify4 != null" >
+        #{modify4,jdbcType=VARCHAR},
+      </if>
+      <if test="modify5 != null" >
+        #{modify5,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="configContent != null" >
+        #{configContent,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="version1 != null" >
+        #{version1,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="version2 != null" >
+        #{version2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="version3 != null" >
+        #{version3,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="version4 != null" >
+        #{version4,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="version5 != null" >
+        #{version5,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.souche.salt_common_01.entity.ConfigExample" resultType="java.lang.Integer" >
+    select count(*) from config
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update config
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.instanceId != null" >
+        instanceId = #{record.instanceId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.configPath != null" >
+        configPath = #{record.configPath,jdbcType=VARCHAR},
+      </if>
+      <if test="record.configName != null" >
+        configName = #{record.configName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.verTime1 != null" >
+        verTime1 = #{record.verTime1,jdbcType=VARCHAR},
+      </if>
+      <if test="record.verTime2 != null" >
+        verTime2 = #{record.verTime2,jdbcType=VARCHAR},
+      </if>
+      <if test="record.verTime3 != null" >
+        verTime3 = #{record.verTime3,jdbcType=VARCHAR},
+      </if>
+      <if test="record.verTime4 != null" >
+        verTime4 = #{record.verTime4,jdbcType=VARCHAR},
+      </if>
+      <if test="record.verTime5 != null" >
+        verTime5 = #{record.verTime5,jdbcType=VARCHAR},
+      </if>
+      <if test="record.crearer != null" >
+        crearer = #{record.crearer,jdbcType=VARCHAR},
+      </if>
+      <if test="record.modify1 != null" >
+        modify1 = #{record.modify1,jdbcType=VARCHAR},
+      </if>
+      <if test="record.modify2 != null" >
+        modify2 = #{record.modify2,jdbcType=VARCHAR},
+      </if>
+      <if test="record.modify3 != null" >
+        modify3 = #{record.modify3,jdbcType=VARCHAR},
+      </if>
+      <if test="record.modify4 != null" >
+        modify4 = #{record.modify4,jdbcType=VARCHAR},
+      </if>
+      <if test="record.modify5 != null" >
+        modify5 = #{record.modify5,jdbcType=VARCHAR},
+      </if>
+      <if test="record.status != null" >
+        status = #{record.status,jdbcType=VARCHAR},
+      </if>
+      <if test="record.configContent != null" >
+        configContent = #{record.configContent,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="record.version1 != null" >
+        version1 = #{record.version1,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="record.version2 != null" >
+        version2 = #{record.version2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="record.version3 != null" >
+        version3 = #{record.version3,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="record.version4 != null" >
+        version4 = #{record.version4,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="record.version5 != null" >
+        version5 = #{record.version5,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map" >
+    update config
+    set id = #{record.id,jdbcType=INTEGER},
+      instanceId = #{record.instanceId,jdbcType=VARCHAR},
+      configPath = #{record.configPath,jdbcType=VARCHAR},
+      configName = #{record.configName,jdbcType=VARCHAR},
+      verTime1 = #{record.verTime1,jdbcType=VARCHAR},
+      verTime2 = #{record.verTime2,jdbcType=VARCHAR},
+      verTime3 = #{record.verTime3,jdbcType=VARCHAR},
+      verTime4 = #{record.verTime4,jdbcType=VARCHAR},
+      verTime5 = #{record.verTime5,jdbcType=VARCHAR},
+      crearer = #{record.crearer,jdbcType=VARCHAR},
+      modify1 = #{record.modify1,jdbcType=VARCHAR},
+      modify2 = #{record.modify2,jdbcType=VARCHAR},
+      modify3 = #{record.modify3,jdbcType=VARCHAR},
+      modify4 = #{record.modify4,jdbcType=VARCHAR},
+      modify5 = #{record.modify5,jdbcType=VARCHAR},
+      status = #{record.status,jdbcType=VARCHAR},
+      configContent = #{record.configContent,jdbcType=LONGVARCHAR},
+      version1 = #{record.version1,jdbcType=LONGVARCHAR},
+      version2 = #{record.version2,jdbcType=LONGVARCHAR},
+      version3 = #{record.version3,jdbcType=LONGVARCHAR},
+      version4 = #{record.version4,jdbcType=LONGVARCHAR},
+      version5 = #{record.version5,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update config
+    set id = #{record.id,jdbcType=INTEGER},
+      instanceId = #{record.instanceId,jdbcType=VARCHAR},
+      configPath = #{record.configPath,jdbcType=VARCHAR},
+      configName = #{record.configName,jdbcType=VARCHAR},
+      verTime1 = #{record.verTime1,jdbcType=VARCHAR},
+      verTime2 = #{record.verTime2,jdbcType=VARCHAR},
+      verTime3 = #{record.verTime3,jdbcType=VARCHAR},
+      verTime4 = #{record.verTime4,jdbcType=VARCHAR},
+      verTime5 = #{record.verTime5,jdbcType=VARCHAR},
+      crearer = #{record.crearer,jdbcType=VARCHAR},
+      modify1 = #{record.modify1,jdbcType=VARCHAR},
+      modify2 = #{record.modify2,jdbcType=VARCHAR},
+      modify3 = #{record.modify3,jdbcType=VARCHAR},
+      modify4 = #{record.modify4,jdbcType=VARCHAR},
+      modify5 = #{record.modify5,jdbcType=VARCHAR},
+      status = #{record.status,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.souche.salt_common_01.entity.ConfigWithBLOBs" >
+    update config
+    <set >
+      <if test="instanceId != null" >
+        instanceId = #{instanceId,jdbcType=VARCHAR},
+      </if>
+      <if test="configPath != null" >
+        configPath = #{configPath,jdbcType=VARCHAR},
+      </if>
+      <if test="configName != null" >
+        configName = #{configName,jdbcType=VARCHAR},
+      </if>
+      <if test="verTime1 != null" >
+        verTime1 = #{verTime1,jdbcType=VARCHAR},
+      </if>
+      <if test="verTime2 != null" >
+        verTime2 = #{verTime2,jdbcType=VARCHAR},
+      </if>
+      <if test="verTime3 != null" >
+        verTime3 = #{verTime3,jdbcType=VARCHAR},
+      </if>
+      <if test="verTime4 != null" >
+        verTime4 = #{verTime4,jdbcType=VARCHAR},
+      </if>
+      <if test="verTime5 != null" >
+        verTime5 = #{verTime5,jdbcType=VARCHAR},
+      </if>
+      <if test="crearer != null" >
+        crearer = #{crearer,jdbcType=VARCHAR},
+      </if>
+      <if test="modify1 != null" >
+        modify1 = #{modify1,jdbcType=VARCHAR},
+      </if>
+      <if test="modify2 != null" >
+        modify2 = #{modify2,jdbcType=VARCHAR},
+      </if>
+      <if test="modify3 != null" >
+        modify3 = #{modify3,jdbcType=VARCHAR},
+      </if>
+      <if test="modify4 != null" >
+        modify4 = #{modify4,jdbcType=VARCHAR},
+      </if>
+      <if test="modify5 != null" >
+        modify5 = #{modify5,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="configContent != null" >
+        configContent = #{configContent,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="version1 != null" >
+        version1 = #{version1,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="version2 != null" >
+        version2 = #{version2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="version3 != null" >
+        version3 = #{version3,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="version4 != null" >
+        version4 = #{version4,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="version5 != null" >
+        version5 = #{version5,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.souche.salt_common_01.entity.ConfigWithBLOBs" >
+    update config
+    set instanceId = #{instanceId,jdbcType=VARCHAR},
+      configPath = #{configPath,jdbcType=VARCHAR},
+      configName = #{configName,jdbcType=VARCHAR},
+      verTime1 = #{verTime1,jdbcType=VARCHAR},
+      verTime2 = #{verTime2,jdbcType=VARCHAR},
+      verTime3 = #{verTime3,jdbcType=VARCHAR},
+      verTime4 = #{verTime4,jdbcType=VARCHAR},
+      verTime5 = #{verTime5,jdbcType=VARCHAR},
+      crearer = #{crearer,jdbcType=VARCHAR},
+      modify1 = #{modify1,jdbcType=VARCHAR},
+      modify2 = #{modify2,jdbcType=VARCHAR},
+      modify3 = #{modify3,jdbcType=VARCHAR},
+      modify4 = #{modify4,jdbcType=VARCHAR},
+      modify5 = #{modify5,jdbcType=VARCHAR},
+      status = #{status,jdbcType=VARCHAR},
+      configContent = #{configContent,jdbcType=LONGVARCHAR},
+      version1 = #{version1,jdbcType=LONGVARCHAR},
+      version2 = #{version2,jdbcType=LONGVARCHAR},
+      version3 = #{version3,jdbcType=LONGVARCHAR},
+      version4 = #{version4,jdbcType=LONGVARCHAR},
+      version5 = #{version5,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.souche.salt_common_01.entity.Config" >
+    update config
+    set instanceId = #{instanceId,jdbcType=VARCHAR},
+      configPath = #{configPath,jdbcType=VARCHAR},
+      configName = #{configName,jdbcType=VARCHAR},
+      verTime1 = #{verTime1,jdbcType=VARCHAR},
+      verTime2 = #{verTime2,jdbcType=VARCHAR},
+      verTime3 = #{verTime3,jdbcType=VARCHAR},
+      verTime4 = #{verTime4,jdbcType=VARCHAR},
+      verTime5 = #{verTime5,jdbcType=VARCHAR},
+      crearer = #{crearer,jdbcType=VARCHAR},
+      modify1 = #{modify1,jdbcType=VARCHAR},
+      modify2 = #{modify2,jdbcType=VARCHAR},
+      modify3 = #{modify3,jdbcType=VARCHAR},
+      modify4 = #{modify4,jdbcType=VARCHAR},
+      modify5 = #{modify5,jdbcType=VARCHAR},
+      status = #{status,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
